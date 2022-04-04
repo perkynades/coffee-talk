@@ -14,14 +14,22 @@ names = ["Emil", "Emilie", "Hanne", "Jonathan", "Sebastian"]
 #Login function
 def login():
     if myTextbox.get() in names:
-        hello_label = Label(root, text="Welcome " + myTextbox.get())
-        myLabel.destroy()
-        myTextbox.destroy()
-        myButton.destroy()
-        hello_label.pack()
+        loggedin()
         mqtt()
     else:
         root.destroy()
+
+def signout():
+    root.destroy()
+
+def loggedin():
+    hello_label = Label(root, text="Welcome " + myTextbox.get())
+    quitButton = Button(root, text="Sign out", command = signout)
+    myLabel.destroy()
+    myTextbox.destroy()
+    myButton.destroy()
+    hello_label.pack()
+    quitButton.pack()
 
 #MQTT function
 def mqtt():
