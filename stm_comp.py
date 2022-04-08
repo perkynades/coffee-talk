@@ -1,5 +1,6 @@
 from stmpy import Driver, Machine
-from tkinter import *
+from appJar import gui
+
 
 def validate_ID(id_name):
     names = ["Emil", "Emilie", "Hanne", "Jonatan", "Sebastian"]
@@ -8,132 +9,137 @@ def validate_ID(id_name):
     return False
 
 #Signout function
-def signout():
-    root.destroy()
-    #idle()
+
+    #pre_login
 
 #Refresh function
-def refresh():
-    print("refresh")
 
-print('hei')
 
 class CompCommunication:
-    def idle(self):
-        hello_label = Label(root, text="Welcome " + myTextbox.get())
-        refreshButton = Button(root, text="Refresh", command = refresh)
-        quitButton = Button(root, text="Sign out", command = signout)
-        myLabel.destroy()
-        myTextbox.destroy()
-        myButton.destroy()
-        hello_label.pack()
-        refreshButton.pack()
-        quitButton.pack()
+
+    #def __init__(self):
         
 
-    def pre_login(self):
-        print('pre login')
-        global root, myLabel, myButton, myTextbox
-        #Define root window
-        root = Tk()
-        root.title('Coffee talk - Desktop application')
-        root.geometry("400x100")
-        #Root window features
-        myLabel = Label(root, text="Enter name: ")
-        myLabel.pack()
-        myTextbox = Entry(root, width=30)
-        myTextbox.pack()
-        myButton = Button(root, text="Login", command= self.stm.send("press_login"))
-        myButton.pack()
+    
+    def display_app(self):
+        print("Display app")
+        self.app.addLabel("h1", "Here you can see the status of the rooms")
+        self.app.addLabel("l1", "Coffee-room 1")
+        self.app.addLabel("l2", "Coffee-room 2")
+        self.app.addLabel("l3", "Lunch-room")
+        self.app.addLabel("l4", "Private room")
+        self.app.setLabelBg("l1", "red")
+        self.app.setLabelBg("l2", "blue")
+        self.app.setLabelBg("l3", "purple")
+        self.app.setLabelBg("l4", "pink")
+        self.app.setFont(12)
+        self.app.addMessage("tekst_l1", "Participants coffee-room 1")
+        self.app.addMessage("tekst_l2", "Participants coffee-room 2")
+        self.app.go()
 
-        #Main loop for tkinter
-        root.mainloop()
 
-    def in_callroom(self):
+
+
+    def display_login(self):
+        self.app = gui()
+        self.app.addLabel("title", "Coffee talk - Desktop")
+        self.app.setLabelBg("title", "red")
+        
+        print('display login')
+        # add labels & entries
+        # in the correct row & column
+        self.app.addLabelEntry("Login")
+        # start the GUI
+        self.app.addButtons( ["Submit"], self.login)
+        self.app.go()
+
+
+    def display_callroom(self):
         #entry: display_welcome_msg, subscribe to mqtt
         #entry: display_callroom
         print('in callroom')
         #exit: unsubscribe mqtt
         return
+    
 
     
-    def check_ID(self):
+    def login(self):
         print('in check id')
         global id_name
-        id_name = myTextbox.get()
-        global wrong_label
+        id_name = self.app.getEntry("Login")
         if validate_ID(id_name):
             print('id valid')
-            self.stm.send("ID_valid")
+            #self.stm.send("valid", "comp")
+            self.stm.send("valid")
+            print("id valid sent")
             #loggedin()
             #videostream()
             #mqtt()
             #send to in_callroom
         else:
             print('id invalid')
-            wrong_label.pack()
-            root.after(1000, lambda: wrong_label.destroy())
-            self.stm.send("ID_invalid")
-            #send to back to idle
+            #self.stm.send("invalid", "comp")
+            self.stm.send("invalid")
+            self.app.errorBox("Failed login")
+            #send to back to pre login
             return
+            
 
-# initial transition
+    def print_message(self, tekst):
+        print(tekst)
+
+# initial transitions
 t0 = {
     "source": "initial", 
-    "target": "pre_login"
+    "target": "pre_login",
+    "effect": "print_message('t0')"
 }
 
 t1 = {
-    "trigger": "press_login",
-    "source": "pre_login", 
-    "target": "check_ID"
+    "trigger": "invalid",
+    "source": "pre_login",
+    "target": "pre_login",
+    "effect": "print_message('t1')"
 }
 
 t2 = {
-    "trigger": "id_invalid",
-    "source": "check_ID",
-    "target": "pre_login",
-    #"effect": "display_error"
+    "trigger": "valid",
+    "source": "pre_login",
+    "target": "idle",
+    "effect": "print_message('t2')"
 }
 
 t3 = {
-    "trigger": "id_valid",
-    "source": "check_ID",
-    "target": "idle",
-    #"effect": "display_welcome"
-}
-
-t4 = {
     "trigger": "join_callroom",
     "source": "idle",
     "target": "in_callroom",
-    #"effect": "display_call"
+    "effect": "print_message('t3')"
 }
 
-t5 = {
+t4 = {
     "trigger": "leave_callroom",
     "source": "in_callroom",
     "target": "idle",
-    #"effect": "display_goodbye"
+    "effect": "print_message('t4')"
 }
 
 t5 = {
     "trigger": "logout",
     "source": "idle",
     "target": "pre_login",
-    #"effect": "display_logout"
+    "effect": "print_message('t5')"
 }
 
-idle = {"name": "idle", "entry": "display_website"}
-pre_login = {"name": "pre_login", "entry": "display_website"}
-in_callroom = {"name": "in_callroom", "entry": "subscribe_mqtt, display_callroom"}
-check_ID = {"name": "check_ID", "entry": "id_valid"}
+#de ulike statene
+idle = {"name": "idle", "entry": "display_app"}
+pre_login = {"name": "pre_login", "entry": "display_login"}
+in_callroom = {"name": "in_callroom", "entry": "display_callroom"}
 
 
 
 
 comp = CompCommunication()
-comp_machine = Machine(transitions=[t0, t1, t2, t3, t4], states=[idle, in_callroom, check_ID], obj=comp, name="comp")
+comp_machine = Machine(transitions=[t0, t1, t2, t3, t4, t5], states=[idle, pre_login, in_callroom,], obj=comp, name="comp")
 comp.stm = comp_machine
 
 driver = Driver()
