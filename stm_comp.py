@@ -19,7 +19,8 @@ def refresh():
 print('hei')
 
 class CompCommunication:
-    def idle(self):
+
+    def display_app(self):
         hello_label = Label(root, text="Welcome " + myTextbox.get())
         refreshButton = Button(root, text="Refresh", command = refresh)
         quitButton = Button(root, text="Sign out", command = signout)
@@ -31,8 +32,8 @@ class CompCommunication:
         quitButton.pack()
         
 
-    def pre_login(self):
-        print('pre login')
+    def display_login(self):
+        print('display login')
         global root, myLabel, myButton, myTextbox
         #Define root window
         root = Tk()
@@ -49,7 +50,7 @@ class CompCommunication:
         #Main loop for tkinter
         root.mainloop()
 
-    def in_callroom(self):
+    def display_callroom(self):
         #entry: display_welcome_msg, subscribe to mqtt
         #entry: display_callroom
         print('in callroom')
@@ -57,7 +58,7 @@ class CompCommunication:
         return
 
     
-    def check_ID(self):
+    def login(self):
         print('in check id')
         global id_name
         id_name = myTextbox.get()
@@ -77,7 +78,7 @@ class CompCommunication:
             #send to back to idle
             return
 
-# initial transition
+# initial transitions
 t0 = {
     "source": "initial", 
     "target": "pre_login"
@@ -124,16 +125,17 @@ t5 = {
     #"effect": "display_logout"
 }
 
-idle = {"name": "idle", "entry": "display_website"}
-pre_login = {"name": "pre_login", "entry": "display_website"}
-in_callroom = {"name": "in_callroom", "entry": "subscribe_mqtt, display_callroom"}
-check_ID = {"name": "check_ID", "entry": "id_valid"}
+#de ulike statene
+idle = {"name": "idle", "entry": "display_app"}
+pre_login = {"name": "pre_login", "entry": "display_login"}
+in_callroom = {"name": "in_callroom", "entry": "display_callroom"}
+check_ID = {"name": "check_ID", "entry": "login"}
 
 
 
 
 comp = CompCommunication()
-comp_machine = Machine(transitions=[t0, t1, t2, t3, t4], states=[idle, in_callroom, check_ID], obj=comp, name="comp")
+comp_machine = Machine(transitions=[t0, t1, t2, t3, t4], states=[idle, pre_login, in_callroom, check_ID], obj=comp, name="comp")
 comp.stm = comp_machine
 
 driver = Driver()
