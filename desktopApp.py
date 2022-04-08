@@ -7,16 +7,16 @@ import paho.mqtt.client as mqtt
 #Login function
 def login():
     #Valid users:
-    names = ["Emil", "Emilie", "Hanne", "Jonathan", "Sebastian"]
+    names = ["Emil", "Emilie", "Hanne", "Jonatan", "Sebastian"]
     global wrong_label
     wrong_label = Label(root, text="Wrong login")
     if myTextbox.get() in names:
         loggedin()
+        videostream()
         mqtt()
     else:
         wrong_label.pack()
         root.after(1000, lambda: wrong_label.destroy())
-        root.after(1000)
         
 
 
@@ -48,6 +48,9 @@ def mqtt():
     #broker, port = "mqtt.item.ntnu.no", 1883
     #client = MQTT_Client_1()
     #client.start(broker, port)
+
+def videostream():
+    print("Video")
 
 #Idle state
 def idle():
