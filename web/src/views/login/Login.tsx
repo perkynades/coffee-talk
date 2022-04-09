@@ -16,7 +16,7 @@ export default function Login(): ReactElement {
     const onFormFinished = (values: any) => {
         if (validateUser(values.name)) {
             setUserNotValid(false)
-            navigate('/office-view')
+            navigate('/office-view', { state: values.name})
             //route to new page
         } else {
             setUserNotValid(true)
