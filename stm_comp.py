@@ -19,10 +19,17 @@ class CompCommunication:
 
     #def __init__(self):
         
-
     
+
     def display_app(self):
         print("Display app")
+
+        self.app.addLabel("title", "Coffee talk - Desktop")
+        self.app.setLabelBg("title", "blue")
+
+        self.app.startFrame("LEFT", row=0, column=0)        
+        #self.app.setSticky("NEW")
+        #self.app.setStretch("COLUMN")
         self.app.addLabel("h1", "Here you can see the status of the rooms")
         self.app.addLabel("l1", "Coffee-room 1")
         self.app.addLabel("l2", "Coffee-room 2")
@@ -32,32 +39,49 @@ class CompCommunication:
         self.app.setLabelBg("l2", "blue")
         self.app.setLabelBg("l3", "purple")
         self.app.setLabelBg("l4", "pink")
+        self.app.stopFrame()
+
+        self.app.startFrame("RIGHT", row=0, column=1)        
+        #self.app.setSticky("NEW")
+        #self.app.setStretch("COLUMN")
         self.app.setFont(12)
-        self.app.addMessage("tekst_l1", "Participants coffee-room 1")
-        self.app.addMessage("tekst_l2", "Participants coffee-room 2")
+        self.app.addMessage("tekst_l1", "Participants Coffee-room 1")
+        self.app.addMessage("tekst_l1_p", "No-one")
+        self.app.addMessage("tekst_l2", "Participants Coffee-room 2")
+        self.app.addMessage("tekst_l2_p", "No-one")
+        self.app.addMessage("tekst_l3", "Participants Lunch-room")
+        self.app.addMessage("tekst_l3_p", "No-one")
+        self.app.addMessage("tekst_l4", "Participants Private room")
+        self.app.addMessage("tekst_l4_p", "No-one")
+        self.app.stopFrame()
         self.app.go()
 
 
 
 
     def display_login(self):
+        print('display login')
         self.app = gui()
         self.app.addLabel("title", "Coffee talk - Desktop")
-        self.app.setLabelBg("title", "red")
-        
-        print('display login')
+        self.app.setLabelBg("title", "blue")
         # add labels & entries
         # in the correct row & column
         self.app.addLabelEntry("Login")
-        # start the GUI
-        self.app.addButtons( ["Submit"], self.login)
+        self.app.addButtons(["Submit"], self.login)
+
         self.app.go()
 
 
     def display_callroom(self):
-        #entry: display_welcome_msg, subscribe to mqtt
-        #entry: display_callroom
+        
         print('in callroom')
+        #entry: subscribe to mqtt
+
+        #display_callroom
+        callroom = "herskalvihentecallroom"
+        self.app.addLabel("title", f'You are in {callroom}')
+        self.app.setLabelBg("title", "blue")
+        
         #exit: unsubscribe mqtt
         return
     
@@ -71,6 +95,7 @@ class CompCommunication:
             print('id valid')
             #self.stm.send("valid", "comp")
             self.stm.send("valid")
+            
             print("id valid sent")
             #loggedin()
             #videostream()
