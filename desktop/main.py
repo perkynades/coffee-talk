@@ -1,9 +1,9 @@
 from flexx import flx
 
-class App(flx.Widget):
+class Login(flx.Widget):
 
     CSS = """
-    .flx-App {
+    .flx-Login {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -25,14 +25,12 @@ class App(flx.Widget):
             self.name_label.set_text("User not authorized!")
         else:
             self.name_label.set_text('Welcome: ' + self.name_input.text)
-
-
-
+            
     def validate_users(self, user_name):
         valid_users = ['Emil', 'Emilie', 'Hanne', 'Jonatan', 'Sebastian']
 
         return bool([ele for ele in valid_users if(ele in user_name)])
 
 if __name__ == '__main__':
-    m = flx.launch(App)
+    flx.launch(Login)
     flx.run()
