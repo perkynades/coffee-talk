@@ -1,3 +1,9 @@
 .office-info {
     text-align: center;
 }
+
+.rooms-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 30rem;
+}
