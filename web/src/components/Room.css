@@ -2,8 +2,18 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: lightgreen;
-    border-style: solid;
+    background-color: #E5E9F0;
+    border-radius: 5px;
     margin: 0.5rem;
     box-shadow: 5px 5px 5px lightgray;
+}
+
+.people-in-room {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+div.people-in-room > * {
+    margin-bottom: 0.25rem;
 }
