@@ -92,7 +92,6 @@ class CompCommunication:
         print('in check id')
         global id_name
         id_name = self.app.getEntry("Login")
-        self.destroy_app()
         if validate_ID(id_name):
             print('id valid')
             #self.stm.send("valid", "comp")
