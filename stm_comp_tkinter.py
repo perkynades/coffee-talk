@@ -10,10 +10,6 @@ def validate_ID(id_name):
     return False
 
 
-
-
-
-
 class CompCommunication:
     #def idle(self):
 
@@ -27,17 +23,22 @@ class CompCommunication:
         root.geometry("400x400")
         #Root window features
         hello_label = Label(root, text="Welcome " + id_name)
-        refreshButton = Button(root, text="Refresh", command = self.refresh)
-        quitButton = Button(root, text="Sign out", command = self.signout)
-        hello_label.pack()
-        refreshButton.pack()
-        quitButton.pack()
+        refreshButton = Button(root, text="Refresh", padx=10, pady=5, command = self.refresh)
+        quitButton = Button(root, text="Sign out", padx=10, pady=5, command = self.signout)
+        hello_label.grid(row=0, column=1)
+        refreshButton.grid(row=1, column=0)
+        quitButton.grid(row=1, column=1)
 
         #Room menu
-        button_1 = Button(root, text="1", padx=40, pady=20, command=self.signout)
-        button_2 = Button(root, text="2", padx=40, pady=20, command=self.signout)
-        button_3 = Button(root, text="3", padx=40, pady=20, command=self.signout)
-        button_4 = Button(root, text="4", padx=40, pady=20, command=self.signout)     
+        button_1 = Button(root, text="1", padx=40, pady=10, command=self.join_callroom)
+        button_2 = Button(root, text="2", padx=40, pady=10, command=self.join_callroom)
+        button_3 = Button(root, text="3", padx=40, pady=10, command=self.join_callroom)
+        button_4 = Button(root, text="4", padx=40, pady=10, command=self.join_callroom) 
+        button_1.grid(row=2, column=0)
+        button_2.grid(row=2, column=1)
+        button_3.grid(row=3, column=0)
+        button_4.grid(row=3, column=1)
+
 
         #Main loop for tkinter
         root.mainloop()
@@ -64,13 +65,22 @@ class CompCommunication:
 
 
     def display_callroom(self):
+        global root
+        root = Tk()
+        root.title('Coffee talk - Desktop application')
+        root.geometry("400x100")
+        callLabel = Label(root, text="Call room")
+        callLabel.pack()
+        leaveButton = Button(root, text="End call", command = self.leave_callroom)
+        leaveButton.pack()
         #entry: display_welcome_msg, subscribe to mqtt
         #entry: display_callroom
         print('in callroom')
 
 
         #exit: unsubscribe mqtt
-        return
+        root.mainloop()
+        
 
 
     def login(self):
@@ -106,6 +116,14 @@ class CompCommunication:
     #idle()
     def print_message(self, tekst):
         print(tekst)
+
+    def join_callroom(self):
+        root.destroy()
+        self.stm.send("join_callroom")
+
+    def leave_callroom(self):
+        root.destroy()
+        self.stm.send("leave_callroom")
 
 # initial transition
 t0 = {
