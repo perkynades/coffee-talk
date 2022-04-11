@@ -45,8 +45,7 @@ class CompCommunication:
         
     def display_login(self):
         print('display login')
-        global root, myLabel, myButton
-        global myTextbox
+        global root, myTextbox
         #Define root window
         root = Tk()
         root.title('Coffee talk - Desktop application')
@@ -107,13 +106,10 @@ class CompCommunication:
         root.destroy()
         self.stm.send("logout")
 
-    #Refresh function
     def refresh(self):
         root.destroy()
         self.stm.send("refresh")
     
-
-    #idle()
     def print_message(self, tekst):
         print(tekst)
 
