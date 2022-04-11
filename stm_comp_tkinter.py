@@ -12,9 +12,7 @@ def validate_ID(id_name):
 
 
 
-#Refresh function
-def refresh():
-    print("refresh")
+
 
 class CompCommunication:
     #def idle(self):
@@ -29,13 +27,17 @@ class CompCommunication:
         root.geometry("400x400")
         #Root window features
         hello_label = Label(root, text="Welcome " + id_name)
-        refreshButton = Button(root, text="Refresh", command = refresh)
+        refreshButton = Button(root, text="Refresh", command = self.refresh)
         quitButton = Button(root, text="Sign out", command = self.signout)
         hello_label.pack()
         refreshButton.pack()
         quitButton.pack()
 
-
+        #Room menu
+        button_1 = Button(root, text="1", padx=40, pady=20, command=self.signout)
+        button_2 = Button(root, text="2", padx=40, pady=20, command=self.signout)
+        button_3 = Button(root, text="3", padx=40, pady=20, command=self.signout)
+        button_4 = Button(root, text="4", padx=40, pady=20, command=self.signout)     
 
         #Main loop for tkinter
         root.mainloop()
@@ -94,6 +96,11 @@ class CompCommunication:
     def signout(self):
         root.destroy()
         self.stm.send("logout")
+
+    #Refresh function
+    def refresh(self):
+        root.destroy()
+        self.stm.send("refresh")
     
 
     #idle()
@@ -141,6 +148,12 @@ t5 = {
     "target": "pre_login",
     "effect": "print_message('t5')"
 }
+t6 = {
+    "trigger": "refresh",
+    "source": "idle",
+    "target": "idle",
+    "effect": "print_message('t6')"
+}
 
 #de ulike statene
 idle = {"name": "idle", "entry": "display_app"}
@@ -151,7 +164,7 @@ in_callroom = {"name": "in_callroom", "entry": "display_callroom"}
 
 
 comp = CompCommunication()
-comp_machine = Machine(transitions=[t0, t1, t2, t3, t4, t5], states=[idle, pre_login, in_callroom,], obj=comp, name="comp")
+comp_machine = Machine(transitions=[t0, t1, t2, t3, t4, t5, t6], states=[idle, pre_login, in_callroom,], obj=comp, name="comp")
 comp.stm = comp_machine
 
 driver = Driver()
