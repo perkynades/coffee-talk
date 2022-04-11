@@ -10,9 +10,7 @@ def validate_ID(id_name):
     return False
 
 
-def destroy_app():
-    root.destroy()
-    #idle()
+
 
 #Refresh function
 def refresh():
@@ -32,12 +30,12 @@ class CompCommunication:
         #Root window features
         hello_label = Label(root, text="Welcome " + id_name)
         refreshButton = Button(root, text="Refresh", command = refresh)
-        quitButton = Button(root, text="Sign out", command = destroy_app)
+        quitButton = Button(root, text="Sign out", command = self.signout)
         hello_label.pack()
         refreshButton.pack()
         quitButton.pack()
 
-        
+
 
         #Main loop for tkinter
         root.mainloop()
@@ -92,6 +90,13 @@ class CompCommunication:
             messagebox.showerror("Error", "Login failed")
             return
 
+
+    def signout(self):
+        root.destroy()
+        self.stm.send("logout")
+    
+
+    #idle()
     def print_message(self, tekst):
         print(tekst)
 
