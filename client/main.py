@@ -18,8 +18,18 @@ class Client:
         # Open website, log in
         # Make websockets report back when ok
 
+# Transitions
 t0 = {
     "source": "initial",
-    "target": "pre-login",
-    "effect": "on_login"
+    "target": "join-callroom",
+    "effect": "on_join_callroom"
 }
+
+t1 = {
+    "trigger": "join_callroom",
+    "source": "pre-login"
+}
+
+# States
+
+idle = {"name": "idle", "entry": ""}
