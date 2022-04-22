@@ -1,7 +1,8 @@
 from tkinter import messagebox
 from stmpy import Driver, Machine
 from tkinter import *
-import threading
+import socket, struct, threading, pyaudio, audioop, numpy, tkinter, math, cv2
+from client import Client
 
 def validate_ID(id_name):
     names = ["Emil", "Emilie", "Hanne", "Jonatan", "Sebastian"]
@@ -9,6 +10,8 @@ def validate_ID(id_name):
         return True
     return False
 
+server_ip_def = '10.22.225.254' #Define yourself
+logged_in_def = "Sebastian" #Define yourself
 
 class CompCommunication:
     #def idle(self):
@@ -72,6 +75,11 @@ class CompCommunication:
         callLabel.pack()
         leaveButton = Button(root, text="End call", command = self.leave_callroom)
         leaveButton.pack()
+        global client
+        client = Client(server_ip_def, logged_in_def, root.winfo_screenwidth(), root.winfo_screenheight()*0.9)
+        client.run()
+        #input("Press enter to shutdown...")
+        
         #entry: display_welcome_msg, subscribe to mqtt
         #entry: display_callroom
         print('in callroom')
@@ -118,6 +126,7 @@ class CompCommunication:
         self.stm.send("join_callroom")
 
     def leave_callroom(self):
+        client.close()
         root.destroy()
         self.stm.send("leave_callroom")
 

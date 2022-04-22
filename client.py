@@ -1,7 +1,7 @@
 import socket, struct, threading, pyaudio, audioop, numpy, tkinter, math, cv2
 
 server_ip_def = '10.22.225.254' #Define yourself
-logged_in_def = "Jonatan" #Define yourself
+logged_in_def = "Sebastian" #Define yourself
 root = tkinter.Tk()
 screen_width_def = root.winfo_screenwidth()
 screen_height_def = root.winfo_screenheight() * 0.9
@@ -152,29 +152,34 @@ class Client:
             self.stream_out.close()
 
     def run(self):
-        x1 = threading.Thread(target = self.send_video)
-        x2 = threading.Thread(target = self.recv_video)
-        x3 = threading.Thread(target = self.send_audio)
-        x4 = threading.Thread(target = self.recv_audio)
-        x5 = threading.Thread(target = self.handshake)
-        x1.start()
-        x2.start()
-        x3.start()
-        x4.start()
-        x5.start()
-        input("Press enter to shutdown... (temporary)")
+        """Docstring"""
+        self.x1 = threading.Thread(target = self.send_video)
+        self.x2 = threading.Thread(target = self.recv_video)
+        self.x3 = threading.Thread(target = self.send_audio)
+        self.x4 = threading.Thread(target = self.recv_audio)
+        self.x5 = threading.Thread(target = self.handshake)
+        self.x1.start()
+        self.x2.start()
+        self.x3.start()
+        self.x4.start()
+        self.x5.start()
+    
+    def close(self):
+        """Docstring"""
+        print("SHUTTING DOWN...")
         try:
             self.handshake_socket.shutdown(socket.SHUT_RDWR)
         except Exception as _:
             pass
-        x1.join()
-        x2.join()
-        x3.join()
-        x4.join()
-        x5.join()
+        self.x1.join()
+        self.x2.join()
+        self.x3.join()
+        self.x4.join()
+        self.x5.join()
         print("SHUTDOWN SUCCESS")
 
 if __name__ == '__main__':
-    print("dum")
     client = Client(server_ip_def, logged_in_def, screen_width_def, screen_height_def)
     client.run()
+    input("Press enter to shutdown...")
+    client.close()
