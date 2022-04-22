@@ -30,10 +30,10 @@ class CompCommunication:
         quitButton.grid(row=1, column=1)
 
         #Room menu
-        button_1 = Button(root, text="1", padx=40, pady=10, command=self.join_callroom)
-        button_2 = Button(root, text="2", padx=40, pady=10, command=self.join_callroom)
-        button_3 = Button(root, text="3", padx=40, pady=10, command=self.join_callroom)
-        button_4 = Button(root, text="4", padx=40, pady=10, command=self.join_callroom) 
+        button_1 = Button(root, text="Join 1", padx=40, pady=10, command=self.join_callroom)
+        button_2 = Button(root, text="Join 2", padx=40, pady=10, command=self.join_callroom)
+        button_3 = Button(root, text="Join 3", padx=40, pady=10, command=self.join_callroom)
+        button_4 = Button(root, text="Join 4", padx=40, pady=10, command=self.join_callroom) 
         button_1.grid(row=2, column=0)
         button_2.grid(row=2, column=1)
         button_3.grid(row=3, column=0)
