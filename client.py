@@ -1,11 +1,4 @@
-import socket, struct, threading, pyaudio, audioop, numpy, tkinter, math, cv2
-
-server_ip_def = '10.22.225.254' #Define yourself
-logged_in_def = "Sebastian" #Define yourself
-root = tkinter.Tk()
-screen_width_def = root.winfo_screenwidth()
-screen_height_def = root.winfo_screenheight() * 0.9
-root.destroy()
+import socket, struct, threading, pyaudio, audioop, numpy, tkinter, math, cv2, time
 
 class Client:
     """Docstring"""
@@ -54,7 +47,7 @@ class Client:
     def handshake(self):
         """Docstring"""
         try:
-            message = f'u={self.username},a={self.audio_socket.getsockname()[0]}:{self.audio_socket.getsockname()[1]},v={self.video_socket.getsockname()[0]}:{self.video_socket.getsockname()[1]};'
+            message = f'{self.audio_socket.getsockname()[0]}:{self.audio_socket.getsockname()[1]},{self.video_socket.getsockname()[0]}:{self.video_socket.getsockname()[1]},{self.username};'
             self.handshake_socket.sendall(message.encode("utf-8"))
             reply = b''
             while True:
@@ -84,14 +77,18 @@ class Client:
             vid = cv2.VideoCapture(0, cv2.CAP_DSHOW)
             vid.set(3, 640)
             vid.set(4, 480)
+            prev = time.time()
+            delay = 1/30
             while vid.isOpened():
                 _ , frame = vid.read()
-                _ , frame = cv2.imencode(".jpg", frame)
-                frame = frame.tobytes()
-                msg1 = b'0' + struct.pack("H",self.user_list.index(self.username)) + frame[:len(frame)//2]
-                msg2 = b'1' + struct.pack("H",self.user_list.index(self.username)) + frame[len(frame)//2:]
-                self.video_socket.send(msg1)
-                self.video_socket.send(msg2)
+                if time.time() - prev > delay:
+                    prev = time.time()
+                    _ , frame = cv2.imencode(".jpg", frame)
+                    frame = frame.tobytes()
+                    msg1 = b'0' + struct.pack("H",self.user_list.index(self.username)) + frame[:len(frame)//2]
+                    msg2 = b'1' + struct.pack("H",self.user_list.index(self.username)) + frame[len(frame)//2:]
+                    self.video_socket.send(msg1)
+                    self.video_socket.send(msg2)
         except Exception as e:
             print("1.",e)
             vid.release()
@@ -113,14 +110,13 @@ class Client:
                 index = data[:1]
                 user = self.user_list[struct.unpack("H", data[1:self.user_size+1])[0]]
                 if index == b'0':
-                    data = data[self.user_size+1:]
-                    user_video_data[user] = data
+                    user_video_data[user] = data[self.user_size+1:]
                 else:
                     if user_video_data[user] and user in self.users_in_call:
                         data = user_video_data[user] + data[self.user_size+1:]
                         output = numpy.frombuffer(data, dtype="B")
                         output = output.reshape(output.shape[0], 1)
-                        output = cv2.imdecode(output, cv2.IMREAD_COLOR)
+                        output = cv2.imdecode(output, 1)
                         cv2.imshow(user, output)
                         cv2.waitKey(1)
                     user_video_data[user] = None
@@ -177,9 +173,3 @@ class Client:
         self.x4.join()
         self.x5.join()
         print("SHUTDOWN SUCCESS")
-
-if __name__ == '__main__':
-    client = Client(server_ip_def, logged_in_def, screen_width_def, screen_height_def)
-    client.run()
-    input("Press enter to shutdown...")
-    client.close()

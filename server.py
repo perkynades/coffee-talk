@@ -17,11 +17,13 @@ video_participant_addresses = set()
 video_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 video_address = (host_ip, 9999)
 video_socket.bind(video_address)
+video_socket.setblocking(False)
 
 audio_participant_addresses = set()
 audio_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 audio_address = (host_ip, 8999)
 audio_socket.bind(audio_address)
+video_socket.setblocking(False)
 
 def serve_handshake():
     """Docstring"""
@@ -46,8 +48,9 @@ def serve_handshake():
                             raise Exception("Connection closed")
                         data.inb += packet
                         if b';' in data.inb:
-                            packet = data.inb[:data.inb.index(b';')+1].decode("utf-8")
-                            data.username = packet[packet.index("u=")+2: packet.index(",a")] + ";"
+                            packet = data.inb.decode("utf-8").split(",")
+                            data.inb = b''
+                            data.username = packet[2]
                             if user_list:
                                 if data.username in user_list:
                                     print(f'CLOSING CONNECTION FROM: {data.addr[0]}:{data.addr[1]} (USER ALREADY IN CALL)')
@@ -56,11 +59,10 @@ def serve_handshake():
                                     s.close()
                                     continue
                                 data.outb += "".join(user_list).encode("utf-8")
-                            data.audio = tuple([packet[packet.index("a=")+2:packet.index(",v")].split(":")[0], int(packet[packet.index("a=")+2:packet.index(",v")].split(":")[1])])
-                            data.video = tuple([packet[packet.index("v=")+2:packet.index(";")].split(":")[0], int(packet[packet.index("v=")+2:packet.index(";")].split(":")[1])])
-                            data.inb = data.inb[data.inb.index(b';')+1:]
-                            video_participant_addresses.add(data.video)
+                            data.audio = tuple([packet[0].split(":")[0], int(packet[0].split(":")[1])])
+                            data.video = tuple([packet[1].split(":")[0], int(packet[1].split(":")[1])])
                             audio_participant_addresses.add(data.audio)
+                            video_participant_addresses.add(data.video)
                             for obj in handshake_selector.__dict__['_fd_to_key'].values():
                                 if obj.data and obj.data.username != data.username:
                                     obj.data.outb += data.username.encode("utf-8")
@@ -70,8 +72,8 @@ def serve_handshake():
                         data.outb = b''
                 except Exception as _:
                     print(f'LOST CONNECTION FROM: {data.addr[0]}:{data.addr[1]}')
-                    video_participant_addresses.remove(data.video)
                     audio_participant_addresses.remove(data.audio)
+                    video_participant_addresses.remove(data.video)
                     user_list.remove(data.username)
                     for obj in handshake_selector.__dict__['_fd_to_key'].values():
                         if obj.data:
@@ -85,7 +87,7 @@ def serve_video():
     while True:
         try:
             data, address = video_socket.recvfrom(65000)
-            if data:
+            if data and address in video_participant_addresses:
                 for participant_address in video_participant_addresses:
                     if participant_address != address:
                         video_socket.sendto(data, participant_address)
@@ -98,7 +100,7 @@ def serve_audio():
     while True:
         try:
             data, address = audio_socket.recvfrom(4096)
-            if data:
+            if data and address in audio_participant_addresses:
                 for participant_address in audio_participant_addresses:
                     if participant_address != address:
                         audio_socket.sendto(data, participant_address)
