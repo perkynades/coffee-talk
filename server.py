@@ -1,9 +1,10 @@
-import socket, struct, threading, selectors, types
+import socket, threading, selectors, types
 
-host_ip = socket.gethostbyname(socket.gethostname())
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.connect(("8.8.8.8", 80))
+host_ip = sock.getsockname()[0]
+sock.close()
 print('HOST IP:', host_ip)
-payload_size = struct.calcsize("L")
-user_size = struct.calcsize("H")
 
 handshake_selector = selectors.DefaultSelector()
 handshake_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -82,21 +83,27 @@ def serve_video():
     """Docstring"""
     print("LISTENING FOR VIDEO AT:", video_address)
     while True:
-        data, address = video_socket.recvfrom(65000)
-        if data:
-            for participant_address in video_participant_addresses:
-                if participant_address != address:
-                    video_socket.sendto(data, participant_address)
+        try:
+            data, address = video_socket.recvfrom(65000)
+            if data:
+                for participant_address in video_participant_addresses:
+                    if participant_address != address:
+                        video_socket.sendto(data, participant_address)
+        except Exception as _:
+            continue
 
 def serve_audio():
     """Docstring"""
     print("LISTENING FOR AUDIO AT:", audio_address)
     while True:
-        data, address = audio_socket.recvfrom(4096)
-        if data:
-            for participant_address in audio_participant_addresses:
-                if participant_address != address:
-                    audio_socket.sendto(data, participant_address)
+        try:
+            data, address = audio_socket.recvfrom(4096)
+            if data:
+                for participant_address in audio_participant_addresses:
+                    if participant_address != address:
+                        audio_socket.sendto(data, participant_address)
+        except Exception as _:
+            continue
 
 if __name__ == '__main__':
     x1 = threading.Thread(target = serve_handshake)
