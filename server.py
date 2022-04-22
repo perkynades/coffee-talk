@@ -1,9 +1,10 @@
-import socket, struct, threading, selectors, types
+import socket, threading, selectors, types
 
-host_ip = socket.gethostbyname(socket.gethostname())
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.connect(("8.8.8.8", 80))
+host_ip = sock.getsockname()[0]
+sock.close()
 print('HOST IP:', host_ip)
-payload_size = struct.calcsize("L")
-user_size = struct.calcsize("H")
 
 handshake_selector = selectors.DefaultSelector()
 handshake_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)

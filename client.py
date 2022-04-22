@@ -1,12 +1,11 @@
-import socket, struct, threading, pyaudio, audioop, numpy, tkinter, math, time
-import cv2
+import socket, struct, threading, pyaudio, audioop, numpy, tkinter, math, cv2
 
 root = tkinter.Tk()
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight() * 0.9
 root.destroy()
 
-server_ip = '192.168.86.39' #Define yourself
+server_ip = '10.22.225.254' #Define yourself
 input_sensitivity = 30 #Define yourself
 logged_in = "Jonatan" #Define yourself
 user_list = ["Emil", "Emilie", "Hanne", "Jonatan", "Sebastian"]
