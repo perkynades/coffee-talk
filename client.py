@@ -1,4 +1,4 @@
-import socket, struct, threading, pyaudio, audioop, numpy, tkinter, math, cv2, time
+import socket, struct, threading, pyaudio, audioop, numpy, math, cv2, time
 
 class Client:
     """Docstring"""
