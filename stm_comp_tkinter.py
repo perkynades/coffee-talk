@@ -71,8 +71,8 @@ class CompCommunication:
         call_label.pack()
         leave_button = Button(self.root, text="End call", command = self.leave_callroom)
         leave_button.pack()
-        self.client = Client(self.server, self.username, self.root.winfo_screenwidth(), self.root.winfo_screenheight()*0.8)
         try:
+            self.client = Client(self.server, self.username, self.root.winfo_screenwidth(), self.root.winfo_screenheight()*0.8)
             self.client.run()
         except Exception as _:
             self.leave_callroom()
@@ -120,7 +120,8 @@ class CompCommunication:
     def leave_callroom(self):
         """Docstring"""
         self.server = None
-        self.client.close()
+        if self.client:
+            self.client.close()
         self.root.destroy()
         self.stm.send("leave_callroom")
 
