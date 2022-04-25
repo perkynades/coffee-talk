@@ -2,18 +2,18 @@ import socket, struct, threading, pyaudio, audioop, numpy, math, cv2, time
 
 class Client:
     """Docstring"""
-    def __init__(self, server_ip, username, screen_width, screen_height):
+    def __init__(self, server_ip, user_list, username, screen_width, screen_height, is_pi):
         """Docstring"""
-        self.user_list = ["Emil", "Emilie", "Hanne", "Jonatan", "Sebastian"]
+        self.user_list = user_list
         self.server_ip = server_ip
         self.username = username
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.is_pi = is_pi
         self.users_in_call = set()
         self.user_size = struct.calcsize("H")
         self.refresh_windows = False
         self.input_sensitivity = 30
-
 
         self.handshake_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.handshake_socket.connect((self.server_ip, 10000))
@@ -64,7 +64,7 @@ class Client:
                 elif not reply:
                     raise Exception("Connection closed")
         except Exception as e:
-            print("5.", e)
+            print("1.", e)
             self.video_socket.shutdown(socket.SHUT_RDWR)
             self.audio_socket.shutdown(socket.SHUT_RDWR)
             self.handshake_socket.close()
@@ -74,7 +74,10 @@ class Client:
     def send_video(self):
         """Docstring"""
         try:
-            vid = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+            if self.is_pi:
+                vid = cv2.VideoCapture(0)
+            else:    
+                vid = cv2.VideoCapture(0, cv2.CAP_DSHOW)
             vid.set(3, 640)
             vid.set(4, 480)
             prev = time.time()
@@ -90,7 +93,7 @@ class Client:
                     self.video_socket.send(msg1)
                     self.video_socket.send(msg2)
         except Exception as e:
-            print("1.",e)
+            print("2.",e)
             vid.release()
 
     def recv_video(self):
@@ -121,7 +124,7 @@ class Client:
                         cv2.waitKey(1)
                     user_video_data[user] = None
         except Exception as e:
-            print("2.", e)
+            print("3.", e)
             cv2.destroyAllWindows()
             cv2.waitKey(1)
 
@@ -134,7 +137,7 @@ class Client:
                 if rms and 20*numpy.log10(rms) > self.input_sensitivity:
                     self.audio_socket.send(data)
         except Exception as e:
-            print("3.", e)
+            print("4.", e)
             self.stream_in.close()
 
     def recv_audio(self):
@@ -144,7 +147,7 @@ class Client:
                 audio_data = self.audio_socket.recv(4096)
                 self.stream_out.write(audio_data)
         except Exception as e:
-            print("4.", e)
+            print("5.", e)
             self.stream_out.close()
 
     def run(self):

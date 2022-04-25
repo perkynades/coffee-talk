@@ -6,8 +6,8 @@ class CompCommunication:
     """Docstring"""
     def __init__(self):
         """Docstring"""
-        self.user_list = ["Emil", "Emilie", "Hanne", "Jonatan", "Sebastian", "Raspberry pi 1", "Raspberry pi 2"]
-        self.server_list = ['192.168.86.43','10.22.225.254','10.22.225.254','10.22.225.254']
+        self.user_list = ["Emil", "Emilie", "Hanne", "Jonatan", "Sebastian", "Coffee machine", "Break Room", "Lunch Room", "Watercooler"]
+        self.server_list = ['192.168.254.18','10.22.225.254','10.22.225.254','10.22.225.254'] #Define yourself
         self.username = None
         self.server = None
         self.client = None
@@ -49,10 +49,10 @@ class CompCommunication:
         quit_button.grid(row=1, column=1)
 
         #Room menu
-        button_1 = Button(self.root, text="Join 1", padx=40, pady=10, command=lambda: self.join_callroom(0))
-        button_2 = Button(self.root, text="Join 2", padx=40, pady=10, command=lambda: self.join_callroom(1))
-        button_3 = Button(self.root, text="Join 3", padx=40, pady=10, command=lambda: self.join_callroom(2))
-        button_4 = Button(self.root, text="Join 4", padx=40, pady=10, command=lambda: self.join_callroom(3)) 
+        button_1 = Button(self.root, text="Join Coffee Room", padx=40, pady=10, command=lambda: self.join_callroom(0))
+        button_2 = Button(self.root, text="Join Break Room", padx=40, pady=10, command=lambda: self.join_callroom(1))
+        button_3 = Button(self.root, text="Join Lunch Room", padx=40, pady=10, command=lambda: self.join_callroom(2))
+        button_4 = Button(self.root, text="Join Watercooler", padx=40, pady=10, command=lambda: self.join_callroom(3)) 
         button_1.grid(row=2, column=0)
         button_2.grid(row=2, column=1)
         button_3.grid(row=3, column=0)
@@ -72,7 +72,7 @@ class CompCommunication:
         leave_button = Button(self.root, text="End call", command = self.leave_callroom)
         leave_button.pack()
         try:
-            self.client = Client(self.server, self.username, self.root.winfo_screenwidth(), self.root.winfo_screenheight()*0.8)
+            self.client = Client(self.server, self.user_list, self.username, self.root.winfo_screenwidth(), self.root.winfo_screenheight()*0.8, False)
             self.client.run()
         except Exception as _:
             self.leave_callroom()
