@@ -1,4 +1,5 @@
 from tkinter import Tk
+from socket import socket, AF_INET, SOCK_DGRAM
 from stmpy import Driver, Machine
 from client import Client
 
@@ -8,8 +9,11 @@ class CompCommunication:
         """Docstring"""
         self.user_list = ["Emil", "Emilie", "Hanne", "Jonatan", "Sebastian", "Coffee machine", "Break Room", "Lunch Room", "Watercooler"]
         self.username = "Coffee machine"
-        self.server = '192.168.254.18' #Define yourself
         self.client = None
+        sock = socket(AF_INET, SOCK_DGRAM)
+        sock.connect(("8.8.8.8", 80))
+        self.server = sock.getsockname()[0]
+        sock.close()
         root = Tk()
         self.screen_width = root.winfo_screenwidth()
         self.screen_height = root.winfo_screenheight()*0.9
