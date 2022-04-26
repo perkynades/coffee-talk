@@ -2,6 +2,7 @@ from tkinter import Tk
 from socket import socket, AF_INET, SOCK_DGRAM
 from stmpy import Driver, Machine
 from client import Client
+from server import Server
 
 class CompCommunication:
     """Docstring"""
@@ -10,10 +11,14 @@ class CompCommunication:
         self.user_list = ["Emil", "Emilie", "Hanne", "Jonatan", "Sebastian", "Coffee machine", "Break Room", "Lunch Room", "Watercooler"]
         self.username = "Coffee machine"
         self.client = None
+
         sock = socket(AF_INET, SOCK_DGRAM)
         sock.connect(("8.8.8.8", 80))
-        self.server = sock.getsockname()[0]
+        self.server_ip = sock.getsockname()[0]
+        self.server = Server(self.server_ip)
+        self.server.run()
         sock.close()
+        
         root = Tk()
         self.screen_width = root.winfo_screenwidth()
         self.screen_height = root.winfo_screenheight()*0.9
@@ -31,7 +36,7 @@ class CompCommunication:
         """Docstring"""
 
         try:
-            self.client = Client(self.server, self.user_list, self.username, self.screen_width, self.screen_height, True)
+            self.client = Client(self.server_ip, self.user_list, self.username, self.screen_width, self.screen_height, False)
             self.client.run()
             input("Press enter to leave callroom...")
             self.leave_callroom()
