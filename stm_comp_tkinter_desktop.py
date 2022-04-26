@@ -1,13 +1,14 @@
 from tkinter import Label, Entry, messagebox, Button, Tk
 from stmpy import Driver, Machine
 from client import Client
+import threading
 
 class CompCommunication:
     """Docstring"""
     def __init__(self):
         """Docstring"""
         self.user_list = ["Emil", "Emilie", "Hanne", "Jonatan", "Sebastian", "Coffee machine", "Break Room", "Lunch Room", "Watercooler"]
-        self.server_list = ['192.168.254.18','10.22.225.254','10.22.225.254','10.22.225.254'] #Define yourself
+        self.server_list = ['192.168.1.228'] #Define yourself
         self.username = None
         self.server = None
         self.client = None
@@ -39,7 +40,7 @@ class CompCommunication:
         self.root.attributes('-topmost',True)
         self.root.title('Coffee talk - Desktop application')
         self.root.geometry(f'400x400+{int(self.root.winfo_screenwidth() / 2)-200}+{int(self.root.winfo_screenheight() / 2)-200}')
-        
+
         #Root window features
         hello_label = Label(self.root, text="Welcome " + self.username)
         refresh_button = Button(self.root, text="Refresh", padx=10, pady=5, command = self.refresh)
@@ -63,6 +64,7 @@ class CompCommunication:
 
     def display_callroom(self):
         """Docstring"""
+        self.client = None
         self.root = Tk()
         self.root.attributes('-topmost',True)
         self.root.title('Coffee talk - Desktop application')
