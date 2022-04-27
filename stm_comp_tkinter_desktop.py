@@ -1,7 +1,8 @@
 from tkinter import Label, Entry, messagebox, Button, Tk
 from stmpy import Driver, Machine
 from client import Client
-import threading
+import requests
+import ast
 
 class CompCommunication:
     """Docstring"""
@@ -13,6 +14,9 @@ class CompCommunication:
         self.server = None
         self.client = None
         self.root = None
+        self.users_in_rooms = dict({
+            "coffeeRoom" : []
+        })
 
     def display_login(self):
         """Docstring"""
@@ -36,6 +40,8 @@ class CompCommunication:
 
     def display_app(self):
         """Docstring"""
+        self.get_users_in_rooms()
+
         self.root = Tk()
         self.root.attributes('-topmost',True)
         self.root.title('Coffee talk - Desktop application')
@@ -58,6 +64,8 @@ class CompCommunication:
         button_2.grid(row=2, column=1)
         button_3.grid(row=3, column=0)
         button_4.grid(row=3, column=1)
+
+        self.create_users_in_room_label(self.root, self.users_in_rooms["coffeeRoom"], "coffee").grid(row=4, column=0)
 
         #Main loop for tkinter
         self.root.mainloop()
@@ -126,6 +134,23 @@ class CompCommunication:
             self.client.close()
         self.root.destroy()
         self.stm.send("leave_callroom")
+
+    # ------ UTILS FOR THE DESKTOP APP ------
+    def get_users_in_rooms(self):
+        try:
+            req = requests.get("http://" + self.server_list[0] + ":8080/user_list/")
+            in_room = ast.literal_eval(req.text)
+            self.users_in_rooms['coffeRoom'] = [s.replace(';', '') for s in in_room]
+        except Exception as e:
+            pass
+    
+    def create_users_in_room_label(self, root, users_in_room, room):
+        room_string = "Users in " + room +" room:\n"
+
+        if users_in_room:
+            return Label(root, text = room_string + '\n'.join(users_in_room))
+        else:
+            return Label(root, text = room_string + 'Room is empty')
 
 # initial transition
 t0 = {
