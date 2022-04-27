@@ -27,9 +27,6 @@ class Client:
         self.audio_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         self.audio_socket.connect((self.server_ip, 8999))
 
-        self.users_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.users_socket.connect((self.server_ip, 7999))
-
         p = pyaudio.PyAudio()
         self.stream_in = p.open(format = pyaudio.paInt16, channels = 1, rate = 44100, input = True, frames_per_buffer = 2048)
         self.stream_out = p.open(format = pyaudio.paInt16, channels = 1, rate = 44100, output = True, frames_per_buffer = 2048)
@@ -52,7 +49,7 @@ class Client:
     def handshake(self):
         """Docstring"""
         try:
-            message = f'{self.audio_socket.getsockname()[0]}:{self.audio_socket.getsockname()[1]},{self.video_socket.getsockname()[0]}:{self.video_socket.getsockname()[1]},{self.users_socket.getsockname()[0]}:{self.users_socket.getsockname()[1]},{self.username};'
+            message = f'{self.audio_socket.getsockname()[0]}:{self.audio_socket.getsockname()[1]},{self.video_socket.getsockname()[0]}:{self.video_socket.getsockname()[1]},{self.username};'
             self.handshake_socket.sendall(message.encode("utf-8"))
             reply = b''
             while True:
@@ -156,27 +153,6 @@ class Client:
         except Exception as e:
             print("5.", e)
             self.stream_out.close()
-
-    def send_users(self):
-        try:
-            while True:
-                self.users_socket.send("get them users")
-        except Exception as e:
-            print("Lala")
-
-    def recv_users(self):
-        try:
-            while True:
-                self.users_data = self.users_socket.recv(4096)
-                print(self.users_data)
-        except Exception as e:
-            print("nn")
-
-    def get_users_list(self):
-        self.x1 = threading.Thread(target = self.send_users)
-        self.x2 = threading.Thread(target = self.recv_users)
-        self.x1.start()
-        self.x2.start()
 
     def run(self):
         """Docstring"""
