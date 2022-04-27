@@ -14,9 +14,7 @@ class CompCommunication:
         self.server = None
         self.client = None
         self.root = None
-        self.users_in_rooms = dict({
-            "coffeeRoom" : []
-        })
+        self.users_in_rooms = dict(coffeeRoom=[], breakRoom=[], lunchRoom=[], waterCooler=[])
 
     def display_login(self):
         """Docstring"""
