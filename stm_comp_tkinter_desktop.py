@@ -139,12 +139,14 @@ class CompCommunication:
 
     # ------ UTILS FOR THE DESKTOP APP ------
     def get_users_in_rooms(self):
-        try:
-            req = requests.get("http://" + self.server_list[0] + ":8080/user_list/")
-            in_room = ast.literal_eval(req.text)
-            self.users_in_rooms['coffeRoom'] = [s.replace(';', '') for s in in_room]
-        except Exception as e:
-            pass
+        keys_list = list(self.users_in_rooms)
+        for i in range(len(self.server_list)):
+            try:
+                req = requests.get("http://" + self.server_list[i] + ":8080/user_list/")
+                in_room = ast.literal_eval(req.text)
+                self.users_in_rooms[keys_list[i]] = [s.replace(';', '') for s in in_room]
+            except Exception as e:
+                pass
     
     def create_users_in_room_label(self, root, users_in_room, room):
         room_string = "Users in " + room +" room:\n"
