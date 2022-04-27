@@ -14,7 +14,7 @@ class CompCommunication:
         self.server = None
         self.client = None
         self.root = None
-        self.users_in_rooms = dict(coffeeRoom=[], breakRoom=[], lunchRoom=[], waterCooler=[])
+        self.users_in_rooms = dict(coffeeRoom=[], breakRoom=[], lunchRoom=[], watercooler=[])
 
     def display_login(self):
         """Docstring"""
@@ -45,7 +45,7 @@ class CompCommunication:
         self.root.title('Coffee talk - Desktop application')
         self.root.geometry(f'400x400+{int(self.root.winfo_screenwidth() / 2)-200}+{int(self.root.winfo_screenheight() / 2)-200}')
 
-        #Root window features
+        # Root window features
         hello_label = Label(self.root, text="Welcome " + self.username)
         refresh_button = Button(self.root, text="Refresh", padx=10, pady=5, command = self.refresh)
         quit_button = Button(self.root, text="Sign out", padx=10, pady=5, command = self.signout)
@@ -53,7 +53,7 @@ class CompCommunication:
         refresh_button.grid(row=1, column=0)
         quit_button.grid(row=1, column=1)
 
-        #Room menu
+        # Room menu
         button_1 = Button(self.root, text="Join Coffee Room", padx=40, pady=10, command=lambda: self.join_callroom(0))
         button_2 = Button(self.root, text="Join Break Room", padx=40, pady=10, command=lambda: self.join_callroom(1))
         button_3 = Button(self.root, text="Join Lunch Room", padx=40, pady=10, command=lambda: self.join_callroom(2))
@@ -63,7 +63,11 @@ class CompCommunication:
         button_3.grid(row=3, column=0)
         button_4.grid(row=3, column=1)
 
+        # Display users in rooms
         self.create_users_in_room_label(self.root, self.users_in_rooms["coffeeRoom"], "coffee").grid(row=4, column=0)
+        self.create_users_in_room_label(self.root, self.users_in_rooms["breakRoom"], "break").grid(row=4, column=1)
+        self.create_users_in_room_label(self.root, self.users_in_rooms["lunchRoom"], "lunch").grid(row=5, column=0)
+        self.create_users_in_room_label(self.root, self.users_in_rooms["watercooler"], "watercooler").grid(row=5, column=1)
 
         #Main loop for tkinter
         self.root.mainloop()
