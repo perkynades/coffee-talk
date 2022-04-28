@@ -105,10 +105,14 @@ class Server:
             except Exception as _:
                 continue
 
+    def get_callroom_user_list(self):
+        """Docstring"""
+        return self.user_list
+
     def run(self):
         """Docstring"""
         @self.rest_app.route('/user_list/', methods=['GET'])
-        def get_user_list():
+        def rest_get_callroom_user_list():
             return str(self.user_list)
 
         x1 = threading.Thread(target = self.serve_handshake)

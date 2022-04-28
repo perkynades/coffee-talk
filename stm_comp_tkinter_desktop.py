@@ -9,7 +9,7 @@ class CompCommunication:
     def __init__(self):
         """Docstring"""
         self.user_list = ["Emil", "Emilie", "Hanne", "Jonatan", "Sebastian", "Coffee machine", "Break Room", "Lunch Room", "Watercooler"]
-        self.server_list = ['192.168.1.228'] #Define yourself
+        self.server_list = ['192.168.86.43'] #Define yourself
         self.username = None
         self.server = None
         self.client = None
@@ -78,7 +78,7 @@ class CompCommunication:
         self.root = Tk()
         self.root.attributes('-topmost',True)
         self.root.title('Coffee talk - Desktop application')
-        self.root.geometry(f'400x{int(self.root.winfo_screenheight()*0.1)}+{int(self.root.winfo_screenwidth() / 2)-200}+{int(self.root.winfo_screenheight()*0.85)}')
+        self.root.geometry(f'400x{int(self.root.winfo_screenheight()*0.1)}+{int(self.root.winfo_screenwidth() / 2)-200}+{int(self.root.winfo_screenheight()*0.8)}')
         call_label = Label(self.root, text="Call room")
         call_label.pack()
         leave_button = Button(self.root, text="End call", command = self.leave_callroom)
@@ -89,11 +89,6 @@ class CompCommunication:
         except Exception as _:
             self.leave_callroom()
         
-        #entry: display_welcome_msg, subscribe to mqtt
-        #entry: display_callroom
-        print('in callroom')
-
-        #exit: unsubscribe mqtt
         self.root.mainloop()
         
     def login(self, username):
@@ -119,10 +114,6 @@ class CompCommunication:
         self.root.destroy()
         self.stm.send("refresh")
     
-    def print_message(self, tekst):
-        """Docstring"""
-        print(tekst)
-
     def join_callroom(self, server_index):
         """Docstring"""
         self.server = self.server_list[server_index]
@@ -139,16 +130,18 @@ class CompCommunication:
 
     # ------ UTILS FOR THE DESKTOP APP ------
     def get_users_in_rooms(self):
+        """Docstring"""
         keys_list = list(self.users_in_rooms)
         for i in range(len(self.server_list)):
             try:
                 req = requests.get("http://" + self.server_list[i] + ":8080/user_list/")
                 in_room = ast.literal_eval(req.text)
                 self.users_in_rooms[keys_list[i]] = [s.replace(';', '') for s in in_room]
-            except Exception as e:
+            except Exception as _:
                 pass
     
     def create_users_in_room_label(self, root, users_in_room, room):
+        """Docstring"""
         room_string = "Users in " + room +" room:\n"
 
         if users_in_room:
@@ -159,49 +152,42 @@ class CompCommunication:
 # initial transition
 t0 = {
     "source": "initial", 
-    "target": "pre_login",
-    "effect": "print_message('t0')"
+    "target": "pre_login"
 }
 
 t1 = {
     "trigger": "invalid",
     "source": "pre_login",
-    "target": "pre_login",
-    "effect": "print_message('t1')"
+    "target": "pre_login"
 }
 
 t2 = {
     "trigger": "valid",
     "source": "pre_login",
-    "target": "idle",
-    "effect": "print_message('t2')"
+    "target": "idle"
 }
 
 t3 = {
     "trigger": "join_callroom",
     "source": "idle",
-    "target": "in_callroom",
-    "effect": "print_message('t3')"
+    "target": "in_callroom"
 }
 
 t4 = {
     "trigger": "leave_callroom",
     "source": "in_callroom",
-    "target": "idle",
-    "effect": "print_message('t4')"
+    "target": "idle"
 }
 
 t5 = {
     "trigger": "logout",
     "source": "idle",
-    "target": "pre_login",
-    "effect": "print_message('t5')"
+    "target": "pre_login"
 }
 t6 = {
     "trigger": "refresh",
     "source": "idle",
-    "target": "idle",
-    "effect": "print_message('t6')"
+    "target": "idle"
 }
 
 pre_login = {"name": "pre_login", "entry": "display_login"}

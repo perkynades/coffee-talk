@@ -69,11 +69,9 @@ class Client:
             print("1.", e)
             self.video_socket.shutdown(socket.SHUT_RDWR)
             self.audio_socket.shutdown(socket.SHUT_RDWR)
-            self.users_socket.shutdown(socket.SHUT_RDWR)
             self.handshake_socket.close()
             self.video_socket.close()
             self.audio_socket.close()
-            self.users_socket.close()
 
     def send_video(self):
         """Docstring"""
